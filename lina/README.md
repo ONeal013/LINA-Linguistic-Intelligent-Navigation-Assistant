@@ -1,6 +1,6 @@
 # LINA - Linguistic Intelligent Navigation Assistant
 
-*LINA stands for **Linguistic Intelligent Navigation Assistant***.
+
 
 > **Note:** This repository is a fork of Joan's LINA for a Master 2 project. The original repository can be found here:  
 > [https://gitlab.com/joan.g.francois/lina.git](https://gitlab.com/joan.g.francois/lina.git)
