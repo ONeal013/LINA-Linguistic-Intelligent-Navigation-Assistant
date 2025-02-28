@@ -1,92 +1,96 @@
-# LINA
+# LINA - Linguistic Intelligent Navigation Assistant
 
+*LINA stands for **Linguistic Intelligent Navigation Assistant***.
 
+> **Note:** This repository is a fork of Joan's LINA for a Master 2 project. The original repository can be found here:  
+> [https://gitlab.com/joan.g.francois/lina.git](https://gitlab.com/joan.g.francois/lina.git)
 
-## Getting started
+## Overview
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+LINA is a multi-modal document search engine that leverages both text and voice interfaces to search within a large textual library. The application supports various search functionalities—including keyword search, regex-based advanced search, and integrated correction features—and also provides an in-app reader for displaying full text documents. The system uses machine learning models for subject and type classification, value estimation, and speaker identification, and employs a flexible plugin architecture to generate responses.
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Architecture and Modules
 
-## Add your files
+### Core Modules
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+- **app.py**  
+  Implements core functions for analyzing text input. This module loads machine learning models to classify subjects, types, and values from a given sentence. It also selects appropriate response plugins based on the analysis.
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/joan.g.francois/lina.git
-git branch -M main
-git push -uf origin main
-```
+- **models.py**  
+  Defines and trains various neural network models using TFLearn. The models include:
+  - Subject classification model
+  - Type classification model
+  - Value estimation model
+  - Speaker identification model
 
-## Integrate with your tools
+- **tools.py**  
+  Provides utility functions for natural language processing tasks such as tokenization, stemming (using NLTK's FrenchStemmer), bag-of-words generation, and data loading from JSON files. These functions support both training and inference processes.
 
-- [ ] [Set up project integrations](https://gitlab.com/joan.g.francois/lina/-/settings/integrations)
+### Plugin System
 
-## Collaborate with your team
+- **pluginDefault.py** and **pluginFactory.py**  
+  Implement a flexible plugin system for generating responses. The default plugin handles general queries, while specialized plugins (e.g., for alarm or remote commands) can be integrated to extend functionality.
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+### Voice Interface
 
-## Test and Deploy
+- **microphone.py**  
+  Implements real-time speech recognition using the Vosk library. It captures audio input, converts it to text, and processes it through the analysis pipeline. Speaker recognition is also performed to tailor responses based on the identified user.
 
-Use the built-in continuous integration in GitLab.
+- **speaker.py**  
+  Handles audio file processing for training and evaluating the speaker identification model, facilitating improved voice command handling.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## Functionalities
 
-***
+- **Search Capabilities:**
+  - **Keyword Search:** Returns documents containing the specified keyword.
+  - **Advanced Regex Search:** Returns documents matching a provided regular expression pattern, with options to search through indexing data or full text (noting that the latter may impact performance).
+  - **Levenshtein Correction:** Utilizes the Levenshtein distance algorithm to suggest alternative search terms in cases of spelling errors, enhancing overall search accuracy.
 
-# Editing this README
+- **Result Ranking:**
+  Documents are ranked based on relevance, considering criteria such as:
+  - Frequency of keyword occurrences.
+  - Centrality measures derived from a Jaccard graph (using metrics like closeness, betweenness, or pagerank).
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+- **Integrated Book Reader:**
+  Provides a built-in reader mode to display the full text of selected documents, ensuring a seamless reading experience on both web and mobile platforms.
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+- **Voice Commands and Speaker Recognition:**
+  Supports real-time voice interaction, with capabilities for both speech-to-text conversion and speaker identification to personalize responses.
 
-## Name
-Choose a self-explaining name for your project.
+## Installation and Setup
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+### Prerequisites
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+- Python 3.x
+- Required Python libraries: TensorFlow, TFLearn, NLTK, Vosk, pyttsx3, and others as listed in `requirements.txt`
+- Vosk models should be placed in the appropriate directories (e.g., `model` for speech recognition, `model-spk` for speaker recognition)
+- JSON training data should be available in the `training_data` and `plugins` directories
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+### Setup Steps
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+1. **Install Dependencies:**  
+   Install all required Python packages using your preferred package manager.
+
+2. **Prepare Training Data:**  
+   Ensure that JSON files for training (both for general language processing and plugin-specific intents) are correctly placed in the `training_data` and `plugins` folders.
+
+3. **Train Models:**  
+   - Launch `models.py` to train the AI models.
+   - Launch `speaker.py` to train the speaker identification model.
+
+4. **Run the Application:**  
+   - Launch `app.py` to boot the AI for text-based search functionality.
+   - Launch `microphone.py` for voice-based interaction.
 
 ## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+1. **Training:**  
+   Run `models.py` to train the AI models with the available training data.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+2. **Booting the AI:**  
+   Run `app.py` to start the text-based search engine.
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+3. **Voice Interaction:**  
+   Run `microphone.py` to engage with LINA via voice commands.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Enjoy using LINA!
