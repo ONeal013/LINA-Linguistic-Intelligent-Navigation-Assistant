@@ -41,19 +41,6 @@ LINA is a multi-modal document search engine that leverages both text and voice 
 
 ## Functionalities
 
-- **Search Capabilities:**
-  - **Keyword Search:** Returns documents containing the specified keyword.
-  - **Advanced Regex Search:** Returns documents matching a provided regular expression pattern, with options to search through indexing data or full text (noting that the latter may impact performance).
-  - **Levenshtein Correction:** Utilizes the Levenshtein distance algorithm to suggest alternative search terms in cases of spelling errors, enhancing overall search accuracy.
-
-- **Result Ranking:**
-  Documents are ranked based on relevance, considering criteria such as:
-  - Frequency of keyword occurrences.
-  - Centrality measures derived from a Jaccard graph (using metrics like closeness, betweenness, or pagerank).
-
-- **Integrated Book Reader:**
-  Provides a built-in reader mode to display the full text of selected documents, ensuring a seamless reading experience on both web and mobile platforms.
-
 - **Voice Commands and Speaker Recognition:**
   Supports real-time voice interaction, with capabilities for both speech-to-text conversion and speaker identification to personalize responses.
 
